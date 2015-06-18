@@ -2,7 +2,7 @@
 
 ## これは何？
 jedi-sakura は、Pythonの静的なコード自動補完ライブラリ jedi ( http://jedi.jedidjah.ch/en/latest/ )
-の、サクラエディタ( http://sakura-editor.sourceforge.net/ )用マクロです。
+の、サクラエディタ( http://sakura-editor.sourceforge.net/ )用プラグインです。
 
 jedi-sakuraを使う事で、サクラエディタのPython用エディタとしての能力を強化できます。
 
@@ -22,7 +22,8 @@ jedi-sakuraを使う事で、サクラエディタのPython用エディタとし
 * サクラエディタ 2.0.6 or higher
 
 ## インストール手順
-通常のサクラエディタプラグインと同様。
+通常のサクラエディタプラグインと同様。以下参照
+http://sakura.qp.land.to/?Plugin
 
 以上
 
