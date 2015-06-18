@@ -1,15 +1,15 @@
 [Plugin]
-Id=jp.yatt.cmpl.jedi
+Id=jp.yatt.app.sakuraedior.plugin.jedi-sakura
 Name=jedi-sakura
 Description=bridge for jedi, Python autocomplete library
 Type=wsh
-Version=0.1
+Version=0.4
 Url=https://d.hatena.ne.jp/yatt/
 Author=yatt
 
 [Wsh]
-;UseCache=0
-UseCache=1
+UseCache=0
+;UseCache=1
 
 [Plug]
 Complement=jedi-sakura.vbs
@@ -20,14 +20,30 @@ O[1].Section=Option
 O[1].Key=PyEnv
 O[1].Label=Pythonフォルダ
 O[1].Type=Dir
-O[1].Type=C:\Python27
+O[1].Default=C:\Python27
+
 O[2].Section=Option
 O[2].Key=CmplTempPath
 O[2].Label=一時ファイル保存先
 O[2].Type=Str
-O[2].Type=C:\jedi-sakura-cmpl.txt
+O[2].Default=C:\jedi-sakura-cmpl.txt
+
 O[3].Section=Option
 O[3].Key=EditingTempPath
 O[3].Label=編集中ファイル一時保存先
 O[3].Type=Str
-O[3].Type=C:\jedi-sakura-editing.txt
+O[3].Default=C:\jedi-sakura-editing.txt
+
+O[4].Section=Option
+O[4].Key=LogEnabled
+O[4].Label=（デバッグ用）ログ出力有無
+O[4].Type=Bool
+O[4].Default=False
+
+O[5].Section=Option
+O[5].Key=LogFilePath
+O[5].Label=（デバッグ用）ログ保存先
+O[5].Type=Str
+O[5].Default=C:\jedi-sakura-log.txt
+
+

@@ -17,12 +17,14 @@ script = jedi.Script(source = open(epath).read(), line = line, column = column, 
 # drop _prop, __prop
 cmpls = [n for n in script.completions() if not n.name.startswith('_')]
 # sort by type, name
-cmpls = sorted(cmpls, key=lambda c: (c.type, c.name))
+#   ... makes no sense
+#cmpls = sorted(cmpls, key=lambda c: (c.type, c.name))
+
 
 for cmpl in cmpls:
     if cmpl.type in [ 'function', 'class' ]:
-        params = ', '.join(p.description for p in cmpl.params)
+        # drop *args, **kwargs, ...
+        params = ', '.join(p.description for p in cmpl.params if not p.description.startswith('*') and not p.description.startswith('...'))
         print "%s(%s)" % (cmpl.name, params)
     else:
         print cmpl.name
-
