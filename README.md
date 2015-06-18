@@ -1,0 +1,2 @@
+# jedi-sakura
+サクラエディタのjediプラグイン
