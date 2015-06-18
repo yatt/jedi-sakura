@@ -1,6 +1,7 @@
 '''MsgBox Complement.GetCurrentWord()
 ' ------------------------------------------------------------------------------
-
+' Constant
+' ------------------------------------------------------------------------------
 ' jediを呼ぶpythonスクリプトへのパス
 '     e.g.) C:\Users\%USERNAME%\AppData\Roaming\sakura\plugins\jedi-sakura\jedi-sakura.py
 Dim strJediBridgeScrpit
@@ -14,6 +15,10 @@ strPythonEnv = Plugin.GetOption("Option", "PyEnv")
 '     e.g.) C:\Python27\python.exe
 Dim strPythonExe
 strPythonExe = strPythonEnv & "\python.exe"
+
+' python.exeに与えるフラグ
+Dim strPythonExeFlags
+strPythonExeFlags = "-O"
 
 ' 編集中ファイルの一時保存先パス
 '     e.g.) C:\jedi-sakura-editing.txt
@@ -41,45 +46,115 @@ strEditingFilePath = Editor.ExpandParameter("$F")
 '''MsgBox strCmplTempPath
 '''MsgBox nLine
 '''MsgBox nColumn
+
+
+' ------------------------------------------------------------------------------
+' Function/Procedure
 ' ------------------------------------------------------------------------------
 
-Dim strBuffer
+Const strLapFilePath = "C:\temp\jedi-sakura-save.txt"
+Function GetLastExecutionTimestamp() 
+    Dim strTimestamp
+    
+    Set oFileSystem = CreateObject("Scripting.FileSystemObject")
+    If Err.Number = 0 Then
+        If oFileSystem.FileExists( strLapFilePath ) Then
+            Set oFile = oFileSystem.OpenTextFile( strLapFilePath )
+            
+            
+            If Err.Number = 0 Then
+                Do While oFile.AtEndOfStream <> True
+                    strTimestamp = oFile.ReadLine()
 
-' 描画ストップ
-Editor.SetDrawSwitch(0)
-'   編集中バッファを取得
-    Editor.MoveHistSet()
-    Editor.SelectAll()
-    strBuffer = Editor.GetSelectedString(0)
-    Editor.MoveHistPrev()
-Editor.SetDrawSwitch(1)
-Editor.ReDraw(0)
+                    GetLastExecutionTimestamp = strTimestamp
+                Loop
+                oFile.Close
+            Else
+                Echo "ファイルオープンエラー: " & Err.Description
+            End If
 
-'   一時保存先へ、編集中バッファを保存
-Dim fso, MyFile
-Set fso = CreateObject("Scripting.FileSystemObject")
-Set MyFile = fso.CreateTextFile(strEditingTempPath, True)
-MyFile.Write(strBuffer)
-MyFile.Close
+        Else
+            GetLastExecutionTimestamp = "1970/01/01 00:00:00"
+        End If
+    Else
+        Echo "エラー: " & Err.Description
+    End If
+
+    Set oFile = Nothing
+    Set oFileSystem = Nothing
+End Function
+
+Sub Touch()
+    Dim fso, MyFile
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set MyFile = fso.CreateTextFile(strLapFilePath, True)
+    MyFile.Write(CStr(Now))
+    MyFile.Close
+End Sub
+
+'Const vbBinaryCompare = 0
+Function IsBlocked()
+    Dim strCurrentTimestamp
+    Dim strLastTimestamp
+    
+    strCurrentTimestamp = Now
+    strLastTimestamp = GetLastExecutionTimestamp()
+    'MsgBox strCurrentTimestamp & vbNewLine & strLastTimestamp
+    If StrComp(strCurrentTimestamp, strLastTimestamp, vbBinaryCompare) = 0 Then
+        IsBlocked = True
+    Else
+        IsBlocked = False
+    End If
+
+End Function
 
 
-Dim WshShell, oExec
-Set WshShell = CreateObject("WScript.Shell")
 
-strCommand = "%comspec% /c " & strPythonExe _
-           & " " & strJediBridgeScrpit _
-           & " " & nLine _
-           & " " & nColumn _
-           & " " & strEditingFilePath _
-           & " " & strEditingTempPath _
-           & " 1> " & strCmplTempPath _
-           & " 2>&1"
-'''MsgBox strCommand
-Dim nReturnCode
-nReturnCode = WshShell.Run(strCommand, 0, True)
+' ------------------------------------------------------------------------------
+' Main
+' ------------------------------------------------------------------------------
+If Not IsBlocked Then
+
+    Dim strBuffer
+
+    ' 描画ストップ
+    Editor.SetDrawSwitch(0)
+    '   編集中バッファを取得
+        Editor.MoveHistSet()
+        Editor.SelectAll()
+        strBuffer = Editor.GetSelectedString(0)
+        Editor.MoveHistPrev()
+    Editor.SetDrawSwitch(1)
+    Editor.ReDraw(0)
+
+    '   一時保存先へ、編集中バッファを保存
+    Dim fso, MyFile
+    Set fso = CreateObject("Scripting.FileSystemObject")
+    Set MyFile = fso.CreateTextFile(strEditingTempPath, True)
+    MyFile.Write(strBuffer)
+    MyFile.Close
+
+
+    Dim WshShell, oExec
+    Set WshShell = CreateObject("WScript.Shell")
+
+    strCommand = "%comspec% /c " & strPythonExe _
+               & " " & strPythonExeFlags _
+               & " " & strJediBridgeScrpit _
+               & " " & nLine _
+               & " " & nColumn _
+               & " " & strEditingFilePath _
+               & " " & strEditingTempPath _
+               & " 1> " & strCmplTempPath
+    '''MsgBox strCommand
+    Dim nReturnCode
+    nReturnCode = WshShell.Run(strCommand, 0, True)
 
 
 
+End If
+
+' 補完ファイルを読み取る
 Dim objFSO      ' FileSystemObject
 Dim objFile     ' ファイル読み込み用
 
@@ -109,4 +184,7 @@ End If
 
 Set objFile = Nothing
 Set objFSO = Nothing
+
+' 時刻を更新
+Touch
 
