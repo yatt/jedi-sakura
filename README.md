@@ -6,7 +6,8 @@ jedi-sakura は、Pythonの静的なコード自動補完ライブラリ jedi ( 
 
 jedi-sakuraを使う事で、サクラエディタのPython用エディタとしての能力を強化できます。
 
-https://github.com/yatt/jedi-sakura/raw/master/docs/screenshots/sample-animation.gif
+![screenshot](https://github.com/yatt/jedi-sakura/raw/master/docs/screenshots/sample-animation.gif)
+
 
 ## できること
 * サクラエディタで、jedi-vimライクな補完ができる。
