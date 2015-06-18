@@ -2,7 +2,6 @@
 ' ------------------------------------------------------------------------------
 ' Constant
 ' ------------------------------------------------------------------------------
-Const strStdErrPath = "C:\jedi-sakura-stderr.txt"
 ' jediを呼ぶpythonスクリプトへのパス
 '     e.g.) C:\Users\%USERNAME%\AppData\Roaming\sakura\plugins\jedi-sakura\jedi-sakura.py
 Dim strJediBridgeScrpit
@@ -51,6 +50,10 @@ blnLogEnabled = Plugin.GetOption("Option", "LogEnabled")
 ' ログファイルパス
 Dim strLogFilePath
 strLogFilePath = Plugin.GetOption("Option", "LogFilePath")
+
+' インタプリタエラー出力先
+Dim strStdErrPath
+strStdErrPath = Plugin.GetOption("Option", "PyStdErrPath")
 
 '''MsgBox strEditingTempPath
 '''MsgBox strCmplTempPath
